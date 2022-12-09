@@ -1,4 +1,4 @@
-#include"config.h"
+#include"calculator.h"
 #include<vector>
 #include<cmath>
 #include<sstream>
