@@ -3,30 +3,29 @@
 #define _Config_H_
 #include<string>
 #include<vector>
-using std::vector, std::string;
+using std::string;
 class Tree {
     class Node {
         bool isSign;
         double value, power;
         char sign;
-        int fa, lson, rson, num;
+        Node *fa, *lson, *rson;
         public:
             Node();
-            Node(char sign, int num, int root, int preFa);
-            Node(double value, int num);
-            void change_val(const int& val, const int& opt);
+            Node(const char& sign, Node* root, Node* pre);
+            Node(const double& value, Node* pre);
+            void change_val(Node* val, const int& opt);
             void change_val(const double& val, const double& opt);
-            int get_val(const int& opt);
+            Node* get_val(const int& opt);
             double get_val(const double& opt);
             char get_val(const char& opt);
             bool get_val(const bool& opt);
+            double get_value(int& err);
     };
-    int cnt, root;
-    bool err;
-    vector<Node*> ptrNode;
-    void add_node(char sign);
-    void add_node(double value);
-    double dfs(int num);
+    Node *root, *pre;
+    void add_node(const char& sign);
+    void add_node(const double& value);
+    void del_node(Node* now);
     public:
         Tree();
         Tree(string str);
