@@ -3,10 +3,8 @@
 #include<cmath>
 #include<sstream>
 #include<string>
+#include<iostream>
 using namespace std;
-double fabs(double x) {
-    return x >= 0 ? x : -x;
-}
 namespace nval {
     bool isSign = 0;
     int num = 1, fa = 2, lson = 4, rson = 8;
@@ -15,6 +13,7 @@ namespace nval {
 }
 Tree::Node::Node() {}
 Tree::Node::Node(char sign, int num, int root, int preFa) {
+    power = 1;
     this->sign = sign;
     isSign = true;
     this->num = num;
@@ -85,9 +84,12 @@ void Tree::add_node(double value) {
 }
 double Tree::dfs(int num) {
     Node& now = *(ptrNode[num]);
+    int lson = now.get_val(nval::lson), rson = now.get_val(nval::rson);
     if(!now.get_val(nval::isSign)) return now.get_val(nval::value);
-    double lval = dfs(now.get_val(nval::lson));
-    double rval = dfs(now.get_val(nval::rson));
+    double lval = dfs(lson);
+    double rval = dfs(rson);
+    lval = pow(lval, ptrNode[lson]->get_val(nval::power));
+    rval = pow(rval, ptrNode[rson]->get_val(nval::power));
     if(err) return 0;
     char sign = now.get_val(nval::sign);
     if(sign == '/' && abs(rval) < 1e-5) {
