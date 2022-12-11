@@ -11,7 +11,6 @@ void add_node_d(Tree* t, const double value) {
 }
 void add_node_c(Tree* t, const char sign) {
     Node* node = (Node *)malloc(sizeof(Node));
-    Node* preFa = t->pre->fa;
     node_init(node);
     node->sign = sign;
     node->isSign = 1;
@@ -21,10 +20,13 @@ void add_node_c(Tree* t, const char sign) {
         t->root = node;
     }
     else {
-        node->fa = t->pre->fa;
         node->lson = t->pre;
-        preFa->rson = node;
-        t->pre->fa = node;
+        if(t->root != t->pre) {
+            node->fa = t->pre->fa;
+            t->pre->fa->rson = node;
+        }
+        else t->root = node;
+        t->pre->fa= node;
     }
     t->pre = node;
 }
@@ -46,19 +48,34 @@ Tree* tree_build(const char* str) {
     Tree* t = (Tree *)malloc(sizeof(Tree));
     t->root = NULL;
     t->pre = NULL;
-    size_t len = strlen(str), lenc = 0;
-    char * s = (char *)malloc(sizeof(char) * get_maxlen(str));
+    t->func = str[0];
+    size_t len = strlen(str), lenc = 1;
+    char * s = (char *)malloc(sizeof(char) * get_maxlen(str + 2));
     while(len > lenc) {
-        sscanf(str + lenc, "%s", s);
-        size_t l = strlen(s);
-        if(lenc) lenc++;
-        lenc += l;
-        if(s[0] == '^') {
-            sscanf(str + lenc, "%s", s);
-            lenc += strlen(s) + 1;
+        read_str(str, s, &lenc);
+        if(is_func(s[0])) {
+            int cnt = 1;
+            size_t tmplen = lenc - 1;
+            while(cnt) {
+                lenc++;
+                if(is_func(str[lenc])) cnt++;
+                if(str[lenc] == ')') cnt--;
+            }
+            size_t size = lenc - tmplen;
+            char * sub = (char *)malloc(sizeof(char) * size);
+            strncpy(sub, str + tmplen, size);
+            Tree* subt = tree_build(sub);
+            free(sub);
+            double res = get_value(subt);
+            tree_del(subt);
+            add_node_d(t, res);
+        }
+        else if(s[0] == '^') {
+        // if(s[0] == '^') {
+            read_str(str, s, &lenc);
             t->pre->power = atof(s);
         }
-        else if(l == 1 && (s[0] == '+' || s[0] == '-' || s[0] == '*' || s[0] == '/')) add_node_c(t, s[0]);
+        else if(s[1] == 0 && is_calc(s[0])) add_node_c(t, s[0]);
         else add_node_d(t, atof(s));
     }
     free(s);
@@ -68,6 +85,10 @@ double get_value(Tree* t) {
     bool err = 0;
     double res = get_val(t->root, &err);
     assert(!err);
+    if(t->func == 's') return sin(res);
+    if(t->func == 'c') return cos(res);
+    if(t->func == 'e') return exp(res);
+    if(t->func == 'l') return log(res);
     return res;
 }
 double get_val(Node* n, bool* err) {
@@ -99,4 +120,15 @@ int get_maxlen(const char* str) {
         }
     }
     return maxlen > (len - p) ? maxlen : (len - p);
+}
+void read_str(const char* str, char* s, size_t* lenc) {
+    ++*lenc;
+    sscanf(str + *lenc, "%s", s);
+    *lenc += strlen(s);
+}
+bool is_func(char c) {
+    return c == '(' || c == 's' || c == 'c' || c == 'e' || c == 'l';
+}
+bool is_calc(char c) {
+    return c == '+' || c == '-' || c == '*' || c == '/';
 }

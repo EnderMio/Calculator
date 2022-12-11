@@ -20,7 +20,7 @@ void stack_push(Stack* st, char c) {
 }
 void stack_pop(Stack* st) {
     assert(st->top > 0);
-    st->top--;
+    --st->top;
 }
 char stack_top(Stack* st) {
     assert(st->top);
