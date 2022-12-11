@@ -61,7 +61,7 @@ Tree* tree_build(const char* str) {
                 if(is_func(str[lenc])) cnt++;
                 if(str[lenc] == ')') cnt--;
             }
-            size_t size = lenc - tmplen;
+            size_t size = lenc++ - tmplen - 1;
             char * sub = (char *)malloc(sizeof(char) * size);
             strncpy(sub, str + tmplen, size);
             Tree* subt = tree_build(sub);
@@ -71,7 +71,6 @@ Tree* tree_build(const char* str) {
             add_node_d(t, res);
         }
         else if(s[0] == '^') {
-        // if(s[0] == '^') {
             read_str(str, s, &lenc);
             t->pre->power = atof(s);
         }
