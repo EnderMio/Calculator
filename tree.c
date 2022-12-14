@@ -10,6 +10,8 @@ void node_init(Node* n);
 Tree* tree_build(const char* str);
 void tree_del(Tree* t);
 double get_value(Tree* t);
+bool is_func(char c);
+bool is_calc(char c);
 
 double tree_calc(const char* str) {
     Tree* tr = tree_build(str);
@@ -139,4 +141,10 @@ void read_str(const char* str, char* s, size_t* lenc) {
     ++*lenc;
     sscanf(str + *lenc, "%s", s);
     *lenc += strlen(s);
+}
+bool is_func(char c) {
+    return c == '(' || c == 's' || c == 'c' || c == 'e' || c == 'l';
+}
+bool is_calc(char c) {
+    return c == '+' || c == '-' || c == '*' || c == '/';
 }
