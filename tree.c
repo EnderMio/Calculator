@@ -1,4 +1,22 @@
 #include"tree.h"
+
+void add_node_d(Tree* t, const double value);
+void add_node_c(Tree* t, const char sign);
+void del_node(Node* now);
+double get_val(Node* n, bool* err);
+int get_maxlen(const char* str);
+void read_str(const char* str, char* s, size_t *lenc);
+void node_init(Node* n);
+Tree* tree_build(const char* str);
+void tree_del(Tree* t);
+double get_value(Tree* t);
+
+double tree_calc(const char* str) {
+    Tree* tr = tree_build(str);
+    double res = get_value(tr);
+    tree_del(tr);
+    return res;
+}
 void add_node_d(Tree* t, const double value) {
     Node* node = (Node *)malloc(sizeof(Node));
     node_init(node);
@@ -46,8 +64,7 @@ void tree_del(Tree* t) {
 }
 Tree* tree_build(const char* str) {
     Tree* t = (Tree *)malloc(sizeof(Tree));
-    t->root = NULL;
-    t->pre = NULL;
+    t->pre = t->root = NULL;
     t->func = str[0];
     size_t len = strlen(str), lenc = 1;
     char * s = (char *)malloc(sizeof(char) * get_maxlen(str + 2));
@@ -91,11 +108,9 @@ double get_value(Tree* t) {
     return res;
 }
 double get_val(Node* n, bool* err) {
-    if(!n->isSign) return n->value;
+    if(!n->isSign) return pow(n->value, n->power);
     double lval = get_val(n->lson, err);
     double rval = get_val(n->rson, err);
-    lval = pow(lval, n->lson->power);
-    rval = pow(rval, n->rson->power);
     if(*err) return 0;
     if(n->sign == '/' && (rval > 0 ? rval : -rval) < 1e-5) {
         *err = 1;
@@ -124,10 +139,4 @@ void read_str(const char* str, char* s, size_t* lenc) {
     ++*lenc;
     sscanf(str + *lenc, "%s", s);
     *lenc += strlen(s);
-}
-bool is_func(char c) {
-    return c == '(' || c == 's' || c == 'c' || c == 'e' || c == 'l';
-}
-bool is_calc(char c) {
-    return c == '+' || c == '-' || c == '*' || c == '/';
 }
