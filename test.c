@@ -9,10 +9,7 @@ int main() {
     //     stack_pop(st);
     // }
 
-    // Tree* tr = tree_build("( -1 + 2 * 3 - 4 + 6 ^ 2 / 2 ^ 2 - 1");
-    Tree* tr = tree_build("( 2 ^ 2");
-    printf("%f", get_value(tr));
-    tree_del(tr);
+    printf("%f", tree_calc("( -1 + 2 * 3 - 4 + 6 ^ 2 / 2 ^ 2 - s -1 + 3.1415926 / 2 + 2 * 1 / 2 )"));
 
     // string *str = string_build();
     // string_add(str, "Hello World");

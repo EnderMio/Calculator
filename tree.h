@@ -18,7 +18,7 @@ extern "C" {
 
 typedef struct NODE {
     bool isSign;
-    double value, power;
+    double value;
     char sign;
     struct NODE *fa, *lson, *rson;
 }Node;

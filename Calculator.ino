@@ -83,13 +83,13 @@ void loop()
             lcd.print(c);
         }
         else if(is_calc(c) || c == '^') {//SIGN
-            if(sign_flag == 0) {
+            if(sign_flag && (is_calc(str->vol[str->len - 1]) || str->vol[str->len - 1] == '^')) str->vol[str->len - 1] = c;
+            else {
                 sign_flag = 1;
                 char s[3] = {' ', c, '\0'};
                 string_add(str, s);
                 if(c == '-' && !is_num(str->vol[str->len - 3]) && str->vol[str->len - 3] != ')') isNeg = 1;
             }
-            else str->vol[str->len - 1] = c;
             lcd_lineclear(&lcd, 7, 0, 14);
             lcd.print(c);
             lcd_lineclear(&lcd, 0, 1, 15);
@@ -135,6 +135,10 @@ void loop()
                 Serial.println(res);
             }
             reset_flag = 1;
+        }
+        else if(results.value == 0xFDB04F && shift_flag) {
+            string_clear(str);
+            calc_init();
         }
         Serial.println(string_cstr(str));
         irrecv.resume();// 恢复接收下一个红外遥控信号 防止空间中红外的反射误判

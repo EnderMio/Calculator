@@ -40,19 +40,30 @@ void add_node_c(Tree* t, const char sign) {
         t->root = node;
     }
     else {
-        node->lson = t->pre;
-        if(t->root != t->pre) {
-            node->fa = t->pre->fa;
-            t->pre->fa->rson = node;
+        if(t->pre->fa && t->pre->fa->isSign && t->pre->fa->sign == '^') {
+            Node* preFa = t->pre->fa;
+            node->lson = preFa;
+            if(preFa->fa) {
+                node->fa = preFa->fa;
+                preFa->fa->rson = node;
+            }
+            else t->root = node;
+            preFa->fa = node;
         }
-        else t->root = node;
-        t->pre->fa= node;
+        else {
+            node->lson = t->pre;
+            if(t->pre->fa) {
+                node->fa = t->pre->fa;
+                t->pre->fa->rson = node;
+            }
+            else t->root = node;
+            t->pre->fa= node;
+        }
     }
     t->pre = node;
 }
 void node_init(Node* n) {
     n->lson = n->rson = n->fa = NULL;
-    n->power = 1;
 }
 void del_node(Node* now) {
     if(now->lson) del_node(now->lson);
@@ -89,10 +100,6 @@ Tree* tree_build(const char* str) {
             tree_del(subt);
             add_node_d(t, res);
         }
-        else if(s[0] == '^') {
-            read_str(str, s, &lenc);
-            t->pre->power = atof(s);
-        }
         else if(s[1] == 0 && is_calc(s[0])) add_node_c(t, s[0]);
         else add_node_d(t, atof(s));
     }
@@ -110,7 +117,7 @@ double get_value(Tree* t) {
     return res;
 }
 double get_val(Node* n, bool* err) {
-    if(!n->isSign) return pow(n->value, n->power);
+    if(!n->isSign) return n->value;
     double lval = get_val(n->lson, err);
     double rval = get_val(n->rson, err);
     if(*err) return 0;
@@ -122,6 +129,7 @@ double get_val(Node* n, bool* err) {
     if(n->sign == '-') return lval - rval;
     if(n->sign == '*') return lval * rval;
     if(n->sign == '/') return lval / rval;
+    if(n->sign == '^') return pow(lval, rval);
     return 0;
 }
 int get_maxlen(const char* str) {
@@ -129,9 +137,7 @@ int get_maxlen(const char* str) {
     int p = -1, maxlen = 0;
     for(int i = 0; i < len; i++) {
         if(str[i] == ' ') {
-            if(i - p > maxlen) {
-                maxlen = i - p;
-            }
+            if(i - p > maxlen) maxlen = i - p;
             p = i;
         }
     }
@@ -146,5 +152,5 @@ bool is_func(char c) {
     return c == '(' || c == 's' || c == 'c' || c == 'e' || c == 'l';
 }
 bool is_calc(char c) {
-    return c == '+' || c == '-' || c == '*' || c == '/';
+    return c == '+' || c == '-' || c == '*' || c == '/' || c == '^';
 }
