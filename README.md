@@ -1,7 +1,5 @@
 # Calculator
 
-START program!!
-
 Good team means good product.
 
 ## Intro
