@@ -17,3 +17,5 @@ The tree realized in the 'tree.c' can receive a string like "( 1 - s ( -1 - 2.14
 ## String
 
 It realized a part of features of the *string* class in C++.
+
+FUCK YOU
